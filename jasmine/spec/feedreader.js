@@ -49,7 +49,7 @@ $(function() {
       // The menu is hidden by the menu-hidden class on body
       hasClass = $('body').hasClass('menu-hidden');
       // Check if body have this class when the page loads
-      expect(hasClass).toBe(true);
+      expect(hasClass).toBeTruthy();
     });
 
     // TEST: Check that the menu change visibility when menu icon is clicked
@@ -60,13 +60,13 @@ $(function() {
       $('.menu-icon-link').trigger('click');
       // Check if menu-hidden class was removed from body element
       hasClass = $('body').hasClass('menu-hidden');
-      expect(hasClass).toBe(false);
+      expect(hasClass).toBeFalsy();
 
     	// Trigger another click to close the menu again
       $('.menu-icon-link').trigger('click');
       // Check that the menu-hidden class was re-added to body element
       hasClass = $('body').hasClass('menu-hidden');
-      expect(hasClass).toBe(true);
+      expect(hasClass).toBeTruthy();
     });
   });
 
@@ -74,11 +74,7 @@ $(function() {
   describe('Initial Entries', function() {
     // Run this function first to ensure that content is loaded before we begin the test
     beforeEach(function(done) {
-      // Loading the first feed
-      loadFeed(0, function() {
-      	// The done function will ensure that nothing is done before everything is complete
-      	done();
-    	});
+      loadFeed(0, done);
   	});
 
     // TEST: Ensure that at least one entry is loaded when loadFeed function is called
@@ -86,7 +82,7 @@ $(function() {
     // CONFIRM: remove entry html in index.html so no entries can show
     it('has at least one entry', function(done) {
       // Checking that entries are not empty
-      var entryLength = $('.entry').length;
+      var entryLength = $('.feed .entry').length;
       expect(entryLength).not.toBe(0);
       done();
     });
@@ -95,33 +91,26 @@ $(function() {
   // New Feed Selection suite
   describe('New Feed Selection', function() {
     var entryFeedOne,
-    		entryFeedTwo,
-        entrySame = false;
-    // Ensure that function is run before starting test
-    beforeEach(function(done) {
-      // Getting the content of the first entry from the first feed
-      entryFeedOne = $('.entry').eq(0).html();
-      // Since the page already run loadFeed(0), I can aquire the entry from this
-      // before loading another feed with loadFeed(1)
-      loadFeed(1, function() {
-        done();
-      });
-    });
+    		entryFeedTwo;
+		// This function will run first and request the first feed. The test will not begin until
+		// the first feed is loaded and we have found the first entry.
+		beforeAll(function(done) {
+			loadFeed(0, function() {
+				entryFeedOne = $('.entry').eq(0).html();
+				done();
+			});
+		});
 
     // TEST: Ensure that content actually changes when loadFeed loads a new feed
-    // CONFIRM: change the number in loadFeed to 0 to load the same feed twice
+    // CONFIRM: change the parameter in one of the loadFeed to load the same feed twice
     it('changes content when new feed is loaded', function(done) {
-      // Getting the content of the first entry from the second feed
-      entryFeedTwo = $('.entry').eq(0).html();
-      // Comparing the two entries
-      if (entryFeedOne === entryFeedTwo) {
-        // Change to true if they are the same. This will fail the test
-        entrySame = true;
-      }
-      // I expect the entries to be different since they come from different feeds
-      // So entrySame should still be false
-      expect(entrySame).toBe(false);
-      done();
+			// Requesting the second feed for comparison.Since anything I put outside this function
+			// will not wait, I keep the expect inside loadFeed to force it to wait for the feed to load.
+			loadFeed(1, function() {
+				entryFeedTwo = $('.entry').eq(0).html();
+				expect(entryFeedOne).not.toEqual(entryFeedTwo);
+				done();
+			});
     });
   });
 }());
