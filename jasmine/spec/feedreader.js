@@ -64,7 +64,7 @@ $(function() {
          expect(hasClass).toBe(true);
        });
 
-       /* TODO: Write a test that ensures the menu changes
+       /* Write a test that ensures the menu changes
         * visibility when the menu icon is clicked. This test
         * should have two expectations: does the menu display when
         * clicked and does it hide when clicked again.
@@ -87,7 +87,7 @@ $(function() {
           done();
         });
       });
-      /* TODO: Write a test that ensures when the loadFeed
+      /* Write a test that ensures when the loadFeed
        * function is called and completes its work, there is at least
        * a single .entry element within the .feed container.
        * Remember, loadFeed() is asynchronous so this test will require
@@ -103,12 +103,26 @@ $(function() {
 
     /* Write a new test suite named "New Feed Selection" */
     describe('New Feed Selection', function() {
-      /* TODO: Write a test that ensures when a new feed is loaded
+      var entryFeedOne,
+          entryFeedTwo,
+          entrySame = false;
+      beforeEach(function(done) {
+        entryFeedOne = $('.entry').eq(0).html();
+        loadFeed(1, function() {
+          done();
+        });
+      });
+      /* Write a test that ensures when a new feed is loaded
        * by the loadFeed function that the content actually changes.
        * Remember, loadFeed() is asynchronous.
        */
-       it('changes content when new feed is loaded', function() {
-
+       it('changes content when new feed is loaded', function(done) {
+         entryFeedTwo = $('.entry').eq(0).html();
+         if(entryFeedOne === entryFeedTwo) {
+           entrySame = true;
+         }
+         expect(entrySame).toBe(false);
+         done();
        });
     });
 }());
