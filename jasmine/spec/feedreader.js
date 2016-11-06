@@ -80,11 +80,10 @@ $(function() {
     // TEST: Ensure that at least one entry is loaded when loadFeed function is called
     // done parameter is passed into the function to let it know that it is done loading
     // CONFIRM: remove entry html in index.html so no entries can show
-    it('has at least one entry', function(done) {
+    it('has at least one entry', function() {
       // Checking that entries are not empty
       var entryLength = $('.feed .entry').length;
       expect(entryLength).not.toBe(0);
-      done();
     });
   });
 
